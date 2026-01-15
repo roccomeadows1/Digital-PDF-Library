@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Download Book – Free ( PDF ePub MOBI )</title>
-<meta name="description" content="Download books for free in PDF, EPUB and MOBI formats.">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="canonical" id="canonical-link" href="https://bookreads.pages.dev/">
+  <meta charset="UTF-8" />
+  <title>Download Book – Free ( PDF ePub MOBI )</title>
+  <meta name="description" content="Download books for free in PDF, EPUB and MOBI formats." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
-  crossorigin="anonymous"></script>
+  <link rel="canonical" id="canonical-link" href="https://bookreads.pages.dev/" />
 
-<style>
-body{margin:0;background:#111;color:#fff;font-family:system-ui}
-.container{max-width:900px;margin:auto;padding:2rem}
-img{max-width:200px;border-radius:12px}
-.button{display:inline-block;background:#0af;color:#000;
-padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:600}
-</style>
+  <style>
+    body { font-family: system-ui, sans-serif; margin:0; background:#111; color:#fff; }
+    .container { max-width:900px; margin:auto; padding:2rem; }
+    img { max-width:200px; border-radius:12px; }
+    a.button {
+      display:inline-block;
+      background:#0af;
+      color:#000;
+      padding:12px 18px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:600;
+      margin-top:1rem;
+    }
+  </style>
 </head>
 <body>
 
@@ -24,7 +30,7 @@ padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:600}
   <h1 id="site-title">Loading…</h1>
   <p id="site-description"></p>
 
-  <img id="book-cover">
+  <img id="book-cover" src="" alt="">
   <h2 id="book-title"></h2>
   <p id="book-author"></p>
   <p id="book-rating"></p>
@@ -33,110 +39,93 @@ padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:600}
 </div>
 
 <!-- PDF MODAL -->
-<div id="pdf-modal" style="display:none;position:fixed;inset:0;
-background:rgba(0,0,0,.8);z-index:9999;align-items:center;justify-content:center">
-  <div style="width:95%;height:95%;background:#000;border-radius:16px;overflow:hidden;position:relative">
+<div id="pdf-modal"
+  style="display:none;position:fixed;inset:0;z-index:9999;
+         background:rgba(0,0,0,.8);align-items:center;justify-content:center;">
+  <div style="width:95%;height:95%;background:#000;
+              border-radius:16px;overflow:hidden;position:relative;">
 
     <button id="pdf-close"
-      style="position:absolute;top:10px;right:10px;background:#111;
-      color:#fff;border:0;padding:6px 10px;border-radius:6px;cursor:pointer">✕</button>
+      style="position:absolute;top:10px;right:10px;
+             background:#111;color:#fff;border:0;
+             padding:6px 10px;border-radius:6px;cursor:pointer;">
+      ✕
+    </button>
 
-    <!-- TOP AD -->
-    <div style="height:60px;display:flex;align-items:center;justify-content:center;background:#000">
+    <!-- 480x60 AD -->
+    <div style="height:60px;display:flex;justify-content:center;align-items:center;background:#000;">
+      <!-- INSERT REAL AD CODE HERE -->
       <div style="width:480px;height:60px;background:#222;color:#aaa;
-        display:flex;align-items:center;justify-content:center">
-        <script>
-  atOptions = {
-    'key' : 'c758ad5a1be615681569e0970d35bb62',
-    'format' : 'iframe',
-    'height' : 60,
-    'width' : 468,
-    'params' : {}
-  };
-</script>
-<script src="https://tuckerclassesjackal.com/c758ad5a1be615681569e0970d35bb62/invoke.js"></script>
+                  display:flex;align-items:center;justify-content:center;">
+        480×60 Banner Ad
       </div>
     </div>
 
-    <div id="pdf-pages"
-      style="height:calc(100% - 60px);overflow:auto;background:#111;padding:1rem">
-    </div>
+    <iframe id="pdf-frame"
+      style="width:100%;height:calc(100% - 60px);border:0;"
+      loading="lazy">
+    </iframe>
+
   </div>
 </div>
 
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc =
- "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-const SITE_URL = "https://bookreads.pages.dev";
+const SITE_URL = 'https://bookreads.pages.dev';
 const params = new URLSearchParams(location.search);
-const isbn = params.get("isbn");
+const isbn = params.get('isbn');
 
-const modal = document.getElementById("pdf-modal");
-const closeBtn = document.getElementById("pdf-close");
-const downloadBtn = document.getElementById("download-btn");
-const pages = document.getElementById("pdf-pages");
+fetch('/data.json')
+  .then(r => r.json())
+  .then(async DATA => {
 
-const AD_EVERY_PAGES = 3;
-
-function createAd(){
-  const d=document.createElement("div");
-  d.style.cssText="display:flex;justify-content:center;margin:24px 0";
-  d.innerHTML=`<div style="width:480px;height:60px;background:#222;color:#aaa;
-  display:flex;align-items:center;justify-content:center">480×60 Banner Ad</div>`;
-  return d;
-}
-
-async function renderPDF(url){
-  pages.innerHTML="";
-  const pdf=await pdfjsLib.getDocument(url).promise;
-
-  for(let i=1;i<=pdf.numPages;i++){
-    const page=await pdf.getPage(i);
-    const v=page.getViewport({scale:1.3});
-    const c=document.createElement("canvas");
-    c.width=v.width;c.height=v.height;
-    c.style.display="block";c.style.margin="0 auto 24px";
-    await page.render({canvasContext:c.getContext("2d"),viewport:v}).promise;
-    pages.appendChild(c);
-    if(i%AD_EVERY_PAGES===0 && i!==pdf.numPages){
-      pages.appendChild(createAd());
+    if (!isbn || !DATA.books[isbn]) {
+      document.getElementById('site-title').textContent = 'Book not found';
+      return;
     }
-  }
-}
 
-fetch("/data.json").then(r=>r.json()).then(async DATA=>{
-  if(!isbn||!DATA.books[isbn]){
-    document.getElementById("site-title").textContent="Book not found";
-    return;
-  }
+    document.getElementById('canonical-link').href =
+      `${SITE_URL}/?isbn=${isbn}`;
 
-  document.getElementById("canonical-link").href=`${SITE_URL}/?isbn=${isbn}`;
+    const book = await fetch(`/api/books?isbn=${isbn}`)
+      .then(r => r.json());
 
-  const book=await fetch(`/api/books?isbn=${isbn}`).then(r=>r.json());
+    document.title =
+      `Download ${book.title} by ${book.author} – Free ( PDF ePub MOBI )`;
 
-  document.title=`Download ${book.title} by ${book.author} – Free ( PDF ePub MOBI )`;
-  document.querySelector('meta[name="description"]').content=
-    `Download ${book.title} by ${book.author} for free. PDF EPUB MOBI.`;
+    document.querySelector('meta[name="description"]').content =
+      `Download ${book.title} by ${book.author} for free. PDF, EPUB & MOBI.`;
 
-  site-title.textContent=book.title;
-  site-description.textContent=`by ${book.author}`;
-  book-title.textContent=book.title;
-  book-author.textContent=book.author;
-  book-rating.textContent="★★★★★ "+book.rating;
-  book-cover.src=book.cover;
-  downloadBtn.href=DATA.books[isbn].download;
+    document.getElementById('site-title').textContent = book.title;
+    document.getElementById('site-description').textContent =
+      `by ${book.author}`;
+
+    document.getElementById('book-title').textContent = book.title;
+    document.getElementById('book-author').textContent = book.author;
+    document.getElementById('book-rating').textContent =
+      '★★★★★ ' + book.rating;
+    document.getElementById('book-cover').src = book.cover;
+
+    document.getElementById('download-btn').href =
+      DATA.books[isbn].download;
+  });
+
+// PDF MODAL LOGIC
+const modal = document.getElementById('pdf-modal');
+const frame = document.getElementById('pdf-frame');
+const closeBtn = document.getElementById('pdf-close');
+const downloadBtn = document.getElementById('download-btn');
+
+downloadBtn.addEventListener('click', e => {
+  e.preventDefault();
+  frame.src = downloadBtn.href;
+  modal.style.display = 'flex';
 });
 
-downloadBtn.onclick=e=>{
-  e.preventDefault();
-  modal.style.display="flex";
-  renderPDF(downloadBtn.href);
-};
-closeBtn.onclick=()=>{
-  modal.style.display="none";
-  pages.innerHTML="";
-};
+closeBtn.addEventListener('click', () => {
+  frame.src = '';
+  modal.style.display = 'none';
+});
 </script>
+
 </body>
 </html>

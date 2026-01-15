@@ -169,7 +169,7 @@ fetch(DATA_URL)
     }
 
     // Goodreads
-    const gr = await fetch(`/api/goodreads?isbn=${isbn}`)
+    const gr = await fetch(`/api/books?isbn=${isbn}`)
       .then(r => r.json());
 
     // Title

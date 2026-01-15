@@ -1,0 +1,17 @@
+{
+  "website": {
+    "title": "Free PDF Download – High Quality Digital Book",
+    "description": "Download a professionally formatted digital book."
+  },
+  "books": {
+    "9780743273565": {
+      "download": "/filebookpdf.pdf"
+    },
+    "9780140449136": {
+      "download": "/filebookpdf.pdf"
+    },
+    "9780061120084": {
+      "download": "/filebookpdf.pdf"
+    }
+  }
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Loading…</title>
+  <meta name="description" content="" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://bookreads.pages.dev/" />
+
+  
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="" />
+  <meta property="og:description" content="" />
+  <meta property="og:image" content="" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="" />
+  <meta name="twitter:description" content="" />
+  <meta name="twitter:image" content="" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-[radial-gradient(1200px_600px_at_20%_-10%,#1b245a,#070b18)] text-slate-200 flex flex-col">
+
+  <!-- Header -->
+  <header class="text-center px-4 pt-12 pb-10 max-w-4xl mx-auto">
+    <p class="tracking-widest text-yellow-400 font-semibold text-sm">BESTSELLING DIGITAL EDITION</p>
+    <h1 id="site-title" class="mt-3 text-3xl md:text-4xl font-bold"></h1>
+    <p id="site-description" class="mt-3 text-slate-400 text-sm md:text-base"></p>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-1 px-4 pb-16">
+    <section class="max-w-4xl mx-auto bg-gradient-to-b from-[#060a1f] to-[#0e1533] rounded-3xl shadow-2xl p-6 md:p-10 text-center">
+
+      <!-- Book -->
+      <img id="book-cover" class="mx-auto w-44 rounded-2xl shadow-xl mb-4" alt="Book cover" />
+      <h2 id="book-title" class="text-xl md:text-2xl font-semibold"></h2>
+      <p id="book-author" class="italic text-slate-400 mb-3"></p>
+
+      <!-- Rating (visual only) -->
+      <div id="book-rating" class="text-yellow-400 text-sm mb-6"></div>
+
+      <!-- Ad -->
+      <div class="flex justify-center my-6">
+        <a href="https://your-ad-link.com" target="_blank" rel="nofollow sponsored">
+          <img src="https://via.placeholder.com/480x60?text=Advertisement" class="rounded-xl shadow-lg" width="480" height="60" loading="lazy" alt="Advertisement" />
+        </a>
+      </div>
+
+      <!-- CTA -->
+      <button id="download-btn" class="mx-auto mt-2 inline-flex items-center justify-center rounded-2xl bg-yellow-400 px-8 py-4 font-bold text-slate-900 shadow-lg hover:bg-yellow-300 transition">
+        Read PDF
+      </button>
+
+      <!-- Formats -->
+      <div class="flex flex-wrap justify-center gap-2 mt-5">
+        <span class="px-3 py-1 rounded-xl bg-slate-900 text-xs text-slate-400">PDF</span>
+        <span class="px-3 py-1 rounded-xl bg-slate-900 text-xs text-slate-400">EPUB</span>
+        <span class="px-3 py-1 rounded-xl bg-slate-900 text-xs text-slate-400">MOBI</span>
+      </div>
+
+      <!-- Reader Reviews -->
+      <div class="mt-10 max-w-xl mx-auto">
+        <h3 class="tracking-widest text-sm mb-3">READER REVIEWS</h3>
+        <div class="bg-[#0b1030] rounded-2xl p-6 shadow-xl">
+          <p id="review-text" class="italic text-sm leading-relaxed"></p>
+          <div class="flex justify-between items-center mt-3">
+            <span id="review-author" class="text-slate-400 text-xs"></span>
+            <span class="text-yellow-400">★★★★★</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-xs text-slate-500 pb-10 px-4">
+    <p>This website distributes only content the owner has the legal right to share.</p>
+    <p class="mt-1">© All rights reserved</p>
+  </footer>
+
+  <!-- PDF Modal -->
+  <div id="pdf-modal" class="hidden fixed inset-0 bg-black/80 z-50 items-center justify-center">
+    <div class="relative w-[90%] h-[90%] bg-black rounded-2xl overflow-hidden">
+      <button id="close-pdf" class="absolute top-3 right-3 bg-slate-800 text-white rounded-lg px-3 py-1">✕</button>
+      <iframe id="pdf-frame" class="w-full h-full border-0"></iframe>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    const DATA_URL = 'data.json';
+
+    fetch(DATA_URL)
+      .then(r => r.json())
+      .then(DATA => {
+        // Title & description
+        document.title = DATA.website.title;
+        document.querySelector('meta[name="description"]').content = DATA.website.description;
+        document.getElementById('site-title').textContent = DATA.website.title;
+        document.getElementById('site-description').textContent = DATA.website.description;
+
+        // Open Graph & Twitter
+        document.querySelector('meta[property="og:title"]').content = DATA.website.title;
+        document.querySelector('meta[property="og:description"]').content = DATA.website.description;
+        document.querySelector('meta[property="og:image"]').content = DATA.book.cover;
+        document.querySelector('meta[name="twitter:title"]').content = DATA.website.title;
+        document.querySelector('meta[name="twitter:description"]').content = DATA.website.description;
+        document.querySelector('meta[name="twitter:image"]').content = DATA.book.cover;
+
+        // Book
+        document.getElementById('book-title').textContent = DATA.book.title;
+        document.getElementById('book-author').textContent = `by ${DATA.book.author}`;
+        document.getElementById('book-cover').src = DATA.book.cover;
+        document.getElementById('book-cover').alt = `${DATA.book.title} book cover`;
+        document.getElementById('download-btn').dataset.href = DATA.book.download;
+
+        // Visual-only positive rating
+        const ratings = [4.6,4.7,4.8,4.9,5.0];
+        const rating = ratings[Math.floor(Math.random()*ratings.length)];
+        document.getElementById('book-rating').innerHTML = `★★★★★ <span class="text-slate-400">${rating.toFixed(1)} / 5</span>`;
+
+        // JSON-LD (Book)
+        const ld = {
+          '@context': 'https://schema.org',
+          '@type': 'Book',
+          'name': DATA.book.title,
+          'author': { '@type': 'Person', 'name': DATA.book.author },
+          'image': DATA.book.cover,
+          'url': window.location.href,
+          'inLanguage': document.documentElement.lang || 'en'
+        };
+        const s = document.createElement('script');
+        s.type = 'application/ld+json';
+        s.textContent = JSON.stringify(ld);
+        document.head.appendChild(s);
+      });
+        document.head.appendChild(s);
+      });
+      });
+
+    /* Reviews */
+    const reviews = [
+      { text: 'Excellent formatting and very easy to read on both desktop and mobile. The download was instant.', author: '— Verified Reader' },
+      { text: 'One of the cleanest PDF editions I’ve downloaded. No broken pages, no weird fonts.', author: '— Digital Library User' },
+      { text: 'Worked perfectly on Kindle, tablet, and phone. Highly recommended.', author: '— Book Enthusiast' }
+    ];
+    let r = 0;
+    const rt = document.getElementById('review-text');
+    const ra = document.getElementById('review-author');
+    const renderReview = () => { rt.textContent = `“${reviews[r].text}”`; ra.textContent = reviews[r].author; };
+    renderReview();
+    setInterval(() => { r = (r+1)%reviews.length; renderReview(); }, 4500);
+
+    /* PDF Viewer */
+    const modal = document.getElementById('pdf-modal');
+    const frame = document.getElementById('pdf-frame');
+    document.getElementById('download-btn').addEventListener('click', () => {
+      frame.src = document.getElementById('download-btn').dataset.href;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    });
+    document.getElementById('close-pdf').addEventListener('click', () => {
+      frame.src = '';
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    });
+  </script>
+
+</body>
+</html>

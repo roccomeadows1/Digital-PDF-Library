@@ -1,0 +1,12 @@
+{
+  "website": {
+    "title": "The Correspondent by Virginia Evans",
+    "description": "The Correspondent by Virginia Evans"
+  },
+  "book": {
+    "title": "The Correspondent",
+    "author": "Virginia Evans",
+    "cover": "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1735235942i/223001257.jpg",
+    "download": "/filebookpdf.pdf"
+  }
+}

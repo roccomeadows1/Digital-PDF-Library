@@ -1,5 +1,4 @@
-export async function onRequest(context) {
-  const { request, env } = context;
+export async function onRequest({ request, env }) {
   const { searchParams } = new URL(request.url);
   const isbn = searchParams.get("isbn");
 
@@ -10,24 +9,39 @@ export async function onRequest(context) {
     );
   }
 
-  const grUrl =
+  if (!env.GOODREADS_KEY) {
+    return new Response(
+      JSON.stringify({ error: "GOODREADS_KEY not set" }),
+      { status: 500 }
+    );
+  }
+
+  const url =
     `https://www.goodreads.com/book/isbn?key=${env.GOODREADS_KEY}&isbn=${isbn}`;
 
-  const res = await fetch(grUrl);
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    return new Response(
+      JSON.stringify({ error: "Goodreads request failed" }),
+      { status: 502 }
+    );
+  }
+
   const xml = await res.text();
 
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(xml, "application/xml");
-
-  const get = (selector) =>
-    doc.querySelector(selector)?.textContent || "";
+  // SIMPLE SAFE XML PARSER
+  const extract = (tag) => {
+    const match = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
+    return match ? match[1].replace(/<!\\[CDATA\\[|\\]\\]>/g, '').trim() : "";
+  };
 
   const data = {
-    title: get("title"),
-    author: get("authors author name"),
-    rating: get("average_rating"),
-    cover: get("image_url"),
-    description: get("description")
+    title: extract("title"),
+    author: extract("name"),
+    rating: extract("average_rating"),
+    cover: extract("image_url"),
+    description: extract("description")
   };
 
   return new Response(JSON.stringify(data), {

@@ -190,6 +190,24 @@ fetch(DATA_URL)
     document.getElementById('site-description').textContent =
       `by ${gr.author} · Free PDF, EPUB & MOBI download`;
 
+      // PDF READER HANDLER
+  const pdfBtn = document.getElementById('download-btn');
+  const pdfModal = document.getElementById('pdf-modal');
+  const pdfFrame = document.getElementById('pdf-frame');
+  const closePdf = document.getElementById('close-pdf');
+
+  pdfBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    if (!pdfBtn.href) return;
+    pdfFrame.src = pdfBtn.href;
+    pdfModal.style.display = 'flex';
+  });
+
+  closePdf.addEventListener('click', function () {
+    pdfFrame.src = '';
+    pdfModal.style.display = 'none';
+  });
+
     // Book
     document.getElementById('book-title').textContent = gr.title;
     document.getElementById('book-author').textContent =

@@ -16,24 +16,38 @@ export async function onRequest({ request, env }) {
     );
   }
 
-  const url =
+  const grUrl =
     `https://www.goodreads.com/book/isbn?key=${env.GOODREADS_KEY}&isbn=${isbn}`;
 
-  const res = await fetch(url);
+  // 👇 CRITICAL: Goodreads requires User-Agent
+  const res = await fetch(grUrl, {
+    headers: {
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+  });
 
   if (!res.ok) {
     return new Response(
-      JSON.stringify({ error: "Goodreads request failed" }),
+      JSON.stringify({
+        error: "Goodreads request failed",
+        status: res.status
+      }),
       { status: 502 }
     );
   }
 
   const xml = await res.text();
 
-  // SIMPLE SAFE XML PARSER
+  // Safe XML extraction (Cloudflare-compatible)
   const extract = (tag) => {
-    const match = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
-    return match ? match[1].replace(/<!\\[CDATA\\[|\\]\\]>/g, '').trim() : "";
+    const match = xml.match(
+      new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`)
+    );
+    return match
+      ? match[1].replace(/<!\\[CDATA\\[|\\]\\]>/g, "").trim()
+      : "";
   };
 
   const data = {

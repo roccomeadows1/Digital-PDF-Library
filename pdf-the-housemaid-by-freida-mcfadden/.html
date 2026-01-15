@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Loading…</title>
+  <meta name="description" content="" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {--bg:#070b18;--card:#0e1533;--text:#e5e7eb;--muted:#a5b0d6;--accent:#facc15;--accent-hover:#fde047}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,sans-serif;background:radial-gradient(1200px 600px at 20% -10%,#1b245a,var(--bg));color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+    header{text-align:center;padding:2.5rem 1rem 2rem;max-width:900px;margin:auto}
+    header h1{font-size:clamp(1.8rem,6vw,2.6rem);margin-bottom:.75rem}
+    header p{color:var(--muted);max-width:720px;margin:auto;font-size:.95rem}
+    main{width:100%;max-width:900px;margin:auto;padding:0 1rem 3rem}
+    .card{background:linear-gradient(180deg,#060a1f,var(--card));border-radius:1.75rem;padding:2rem;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.45)}
+    .book-cover{width:180px;border-radius:1rem;box-shadow:0 15px 40px rgba(0,0,0,.45);margin-bottom:1rem}
+    .stars{color:var(--accent);margin-bottom:1.25rem;font-size:.95rem}
+    .ad-banner{display:flex;justify-content:center;margin:1.75rem 0 1.25rem}
+    .ad-banner img{max-width:100%;border-radius:.75rem;box-shadow:0 8px 25px rgba(0,0,0,.35)}
+    .download-btn{display:block;max-width:320px;margin:1.25rem auto 0;padding:1rem 1.6rem;border-radius:1rem;background:var(--accent);color:#1a1400;font-weight:700;text-decoration:none;transition:.15s;box-shadow:0 10px 30px rgba(250,204,21,.35)}
+    .download-btn:hover{background:var(--accent-hover);transform:translateY(-2px)}
+    .formats{display:flex;justify-content:center;gap:.75rem;margin-top:1rem;flex-wrap:wrap}
+    .format-badge{padding:.4rem .75rem;border-radius:.75rem;background:#11153a;font-size:.75rem;color:var(--muted)}
+    footer{text-align:center;padding:2rem 1rem 2.5rem;font-size:.75rem;color:var(--muted)}
+  </style>
+</head>
+<body>
+
+<header>
+  <p style="letter-spacing:.15em;color:var(--accent);font-weight:600">BESTSELLING DIGITAL EDITION</p>
+  <h1 id="site-title"></h1>
+  <p id="site-description"></p>
+</header>
+
+<main>
+  <section class="card">
+
+    <img id="book-cover" class="book-cover" alt="Book cover" />
+    <h2 id="book-title"></h2>
+    <p id="book-author" style="font-style:italic"></p>
+
+    <!-- Random positive rating (visual only) -->
+    <div class="stars" id="book-rating"></div>
+
+    <!-- 480x60 Ad -->
+    <div class="ad-banner">
+      <a href="https://your-ad-link.com" target="_blank" rel="nofollow sponsored">
+        <img src="https://via.placeholder.com/480x60?text=Advertisement" width="480" height="60" loading="lazy" alt="Advertisement" />
+      </a>
+    </div>
+
+    <a class="download-btn" id="download-btn" href="#" role="button">Read PDF</a>
+
+    <div class="formats">
+      <span class="format-badge">PDF</span>
+      <span class="format-badge">EPUB</span>
+      <span class="format-badge">MOBI</span>
+    </div>
+
+      <!-- READER REVIEWS -->
+    <div style="margin-top:2.5rem;max-width:640px;margin-inline:auto;text-align:center">
+      <h3 style="margin-bottom:1rem;letter-spacing:.12em">READER REVIEWS</h3>
+      <div style="background:#0b1030;border-radius:1rem;padding:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.35)">
+        <p id="review-text" style="font-style:italic;line-height:1.6"></p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.75rem">
+          <span id="review-author" style="color:var(--muted);font-size:.85rem"></span>
+          <span style="color:var(--accent)">★★★★★</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<footer>
+  <p>This website distributes only content the owner has the legal right to share.</p>
+  <p>© All rights reserved</p>
+</footer>
+
+<!-- PDF Viewer Modal -->
+<div id="pdf-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;">
+  <div style="width:90%;height:90%;background:#000;border-radius:1rem;overflow:hidden;position:relative;">
+    <button id="close-pdf" style="position:absolute;top:.75rem;right:.75rem;background:#11153a;color:#fff;border:0;border-radius:.5rem;padding:.4rem .75rem;cursor:pointer;">✕</button>
+    <iframe id="pdf-frame" src="" style="width:100%;height:100%;border:0" allowfullscreen></iframe>
+  </div>
+</div>
+
+<script>
+  /* ===== FINAL SINGLE SOURCE JSON ===== */
+  /* ===== EXTERNAL DATA SOURCE ===== */
+  const DATA_URL = 'data.json';
+
+  /* ===== Load External JSON ===== */
+  fetch(DATA_URL)
+    .then(res => res.json())
+    .then(DATA => {
+      /* Render Website */
+      // Render site title & description from JSON (meta + visible)
+      document.title = DATA.website.title;
+      document.querySelector('meta[name="description"]').setAttribute('content', DATA.website.description);
+      document.getElementById('site-title').textContent = DATA.website.title;
+      document.getElementById('site-description').textContent = DATA.website.description;
+
+      /* Render Book */
+      document.getElementById('book-title').textContent = DATA.book.title;
+      document.getElementById('book-author').textContent = `by ${DATA.book.author}`;
+      document.getElementById('book-cover').src = DATA.book.cover;
+      document.getElementById('download-btn').href = DATA.book.download;
+
+      /* Random Positive Rating (visual only) */
+      const ratings=[4.6,4.7,4.8,4.9,5.0];
+      const rating=ratings[Math.floor(Math.random()*ratings.length)];
+      const stars='★★★★★'.slice(0,Math.round(rating));
+      document.getElementById('book-rating').innerHTML=`${stars} <span style="color:var(--muted)">${rating.toFixed(1)} / 5</span>`;
+    })
+    .catch(err => console.error('Failed to load data.json', err));
+
+  /* ===== Open PDF in Browser (iframe viewer) ===== */
+  const btn = document.getElementById('download-btn');
+  const modal = document.getElementById('pdf-modal');
+  const frame = document.getElementById('pdf-frame');
+  const closeBtn = document.getElementById('close-pdf');
+
+  btn.addEventListener('click', e => {
+    e.preventDefault();
+    frame.src = btn.href;
+    modal.style.display = 'flex';
+  });
+
+  closeBtn.addEventListener('click', () => {
+    frame.src = '';
+    modal.style.display = 'none';
+  });
+  /* ===== Rotating Reader Reviews (visual only) ===== */
+  (function(){
+    const reviews=[
+      {text:"Excellent formatting and very easy to read on both desktop and mobile. The download was instant.",author:"— Verified Reader"},
+      {text:"One of the cleanest PDF editions I’ve downloaded. No broken pages, no weird fonts.",author:"— Digital Library User"},
+      {text:"Worked perfectly on Kindle, tablet, and phone. Highly recommended.",author:"— Book Enthusiast"}
+    ];
+    let i=0;
+    const t=document.getElementById('review-text');
+    const a=document.getElementById('review-author');
+    const render=()=>{t.textContent=`“${reviews[i].text}”`;a.textContent=reviews[i].author};
+    render();
+    setInterval(()=>{i=(i+1)%reviews.length;render()},4500);
+  })();
+</script>
+
+</body>
+</html>

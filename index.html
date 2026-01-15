@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Digital Book Library</title>
+  <meta name="description" content="Read digital books directly in your browser. Clean editions, instant access, no forced downloads." />
+  <link rel="canonical" href="https://example.com/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Digital Book Library" />
+  <meta property="og:description" content="Read digital books directly in your browser. Clean editions, instant access." />
+  <meta property="og:image" content="https://via.placeholder.com/1200x630" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-[radial-gradient(1200px_600px_at_20%_-10%,#1b245a,#070b18)] text-slate-200">
+
+  <!-- Header -->
+  <header class="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between">
+    <h1 class="text-2xl font-bold">Digital Book Library</h1>
+    <nav class="mt-4 md:mt-0 flex gap-6 text-sm text-slate-400">
+      <a href="/" class="hover:text-yellow-400">Home</a>
+      <a href="/book.html" class="hover:text-yellow-400">Book</a>
+      <a href="/library" class="hover:text-yellow-400">Library</a>
+      <a href="/contact" class="hover:text-yellow-400">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-6 py-20 text-center">
+    <h2 class="text-4xl md:text-5xl font-extrabold leading-tight">
+      Read Digital Books<br class="hidden md:block" /> Directly in Your Browser
+    </h2>
+    <p class="mt-6 text-slate-400 max-w-2xl mx-auto">
+      High-quality digital books you can read instantly. No forced downloads, no clutter, works on all devices.
+    </p>
+    <div class="mt-8 flex justify-center gap-4">
+      <a href="/book.html" class="px-8 py-4 rounded-2xl bg-yellow-400 text-slate-900 font-bold hover:bg-yellow-300 transition">
+        Read Featured Book
+      </a>
+      <a href="/library" class="px-8 py-4 rounded-2xl bg-slate-800 text-slate-200 hover:bg-slate-700 transition">
+        Browse Library
+      </a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-3 gap-8">
+    <div class="bg-[#0e1533] rounded-3xl p-8 shadow-xl">
+      <h3 class="font-bold text-lg mb-2">Instant Reading</h3>
+      <p class="text-slate-400 text-sm">Open books directly in your browser without forced downloads.</p>
+    </div>
+    <div class="bg-[#0e1533] rounded-3xl p-8 shadow-xl">
+      <h3 class="font-bold text-lg mb-2">Clean Editions</h3>
+      <p class="text-slate-400 text-sm">Carefully formatted digital books with smooth reading experience.</p>
+    </div>
+    <div class="bg-[#0e1533] rounded-3xl p-8 shadow-xl">
+      <h3 class="font-bold text-lg mb-2">Any Device</h3>
+      <p class="text-slate-400 text-sm">Optimized for desktop, tablet, and mobile devices.</p>
+    </div>
+  </section>
+
+  <!-- Reader Reviews -->
+  <section class="max-w-6xl mx-auto px-6 py-20 text-center">
+    <h3 class="text-xl font-bold mb-8 tracking-widest">READER REVIEWS</h3>
+
+    <div class="max-w-xl mx-auto bg-[#0e1533] rounded-3xl p-8 shadow-xl">
+      <div id="stars" class="text-yellow-400 text-lg mb-3">★★★★★</div>
+      <p id="review-text" class="italic text-slate-300"></p>
+      <p id="review-author" class="mt-4 text-sm text-slate-400"></p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 text-center text-xs text-slate-500 py-10 px-6">
+    <p>This website distributes only content the owner has the legal right to share.</p>
+    <p class="mt-1">© 2026 Digital Book Library</p>
+  </footer>
+
+  <script>
+    const reviews = [
+      { text: "Excellent formatting and very easy to read on both desktop and mobile.", author: "— Verified Reader" },
+      { text: "One of the cleanest digital editions I’ve read. No broken pages at all.", author: "— Digital Library User" },
+      { text: "Works perfectly on phone, tablet, and desktop. Highly recommended.", author: "— Book Enthusiast" }
+    ];
+
+    // Randomize start
+    let index = Math.floor(Math.random() * reviews.length);
+
+    const textEl = document.getElementById('review-text');
+    const authorEl = document.getElementById('review-author');
+
+    function renderReview() {
+      textEl.textContent = `“${reviews[index].text}”`;
+      authorEl.textContent = reviews[index].author;
+    }
+
+    renderReview();
+
+    setInterval(() => {
+      index = (index + 1) % reviews.length;
+      renderReview();
+    }, 4500);
+  </script>
+</body>
+</html>
